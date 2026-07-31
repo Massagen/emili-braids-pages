@@ -121,7 +121,35 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      booked_slots: {
+        Row: {
+          appointment_date: string | null
+          end_time: string | null
+          professional_id: string | null
+          start_time: string | null
+        }
+        Insert: {
+          appointment_date?: string | null
+          end_time?: string | null
+          professional_id?: string | null
+          start_time?: string | null
+        }
+        Update: {
+          appointment_date?: string | null
+          end_time?: string | null
+          professional_id?: string | null
+          start_time?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
