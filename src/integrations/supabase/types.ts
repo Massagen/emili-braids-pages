@@ -14,7 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          appointment_date: string
+          client_name: string
+          client_phone: string
+          created_at: string
+          end_time: string
+          id: string
+          notes: string | null
+          professional_id: string | null
+          service_id: string | null
+          start_time: string
+          status: string
+        }
+        Insert: {
+          appointment_date: string
+          client_name: string
+          client_phone: string
+          created_at?: string
+          end_time: string
+          id?: string
+          notes?: string | null
+          professional_id?: string | null
+          service_id?: string | null
+          start_time: string
+          status?: string
+        }
+        Update: {
+          appointment_date?: string
+          client_name?: string
+          client_phone?: string
+          created_at?: string
+          end_time?: string
+          id?: string
+          notes?: string | null
+          professional_id?: string | null
+          service_id?: string | null
+          start_time?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professionals: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          active: boolean
+          created_at: string
+          duration_minutes: number
+          id: string
+          name: string
+          price: number | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          name: string
+          price?: number | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          name?: string
+          price?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
