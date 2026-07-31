@@ -5,11 +5,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Loader2 } from "lucide-react";
 
-import {
-  listAppointments,
-  updateAppointmentStatus,
-  type AdminAppointment,
-} from "@/lib/admin-actions";
+import { supabase } from "@/integrations/supabase/client";
 import { APPOINTMENT_STATUS_LABEL } from "@/lib/scheduling";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -22,22 +18,55 @@ export const Route = createFileRoute("/admin")({
 });
 
 const STATUS_OPTIONS = ["pendente", "confirmado", "concluido", "cancelado"];
+// Senha simples para proteger a TELA do painel. Troque por algo só seu.
+const ADMIN_PASSWORD = "EmiliBraids2026!";
+
+type AdminAppointment = {
+  id: string;
+  client_name: string;
+  client_phone: string;
+  appointment_date: string;
+  start_time: string;
+  end_time: string;
+  status: string;
+  notes: string | null;
+  services: { name: string } | null;
+  professionals: { name: string } | null;
+};
 
 function AdminPage() {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
+  const [authError, setAuthError] = useState(false);
   const [dateFilter, setDateFilter] = useState(format(new Date(), "yyyy-MM-dd"));
   const queryClient = useQueryClient();
 
   const appointmentsQuery = useQuery({
     queryKey: ["admin-appointments", dateFilter, authed],
     enabled: authed,
-    queryFn: () => listAppointments({ data: { password, date: dateFilter || undefined } }),
+    queryFn: async () => {
+      let query = supabase
+        .from("appointments")
+        .select(
+          "id, client_name, client_phone, appointment_date, start_time, end_time, status, notes, services(name), professionals(name)",
+        )
+        .order("appointment_date", { ascending: true })
+        .order("start_time", { ascending: true });
+      if (dateFilter) query = query.eq("appointment_date", dateFilter);
+      const { data, error } = await query;
+      if (error) throw error;
+      return (data ?? []) as unknown as AdminAppointment[];
+    },
   });
 
   const statusMutation = useMutation({
-    mutationFn: (vars: { id: string; status: string }) =>
-      updateAppointmentStatus({ data: { password, id: vars.id, status: vars.status } }),
+    mutationFn: async (vars: { id: string; status: string }) => {
+      const { error } = await supabase
+        .from("appointments")
+        .update({ status: vars.status })
+        .eq("id", vars.id);
+      if (error) throw error;
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-appointments"] }),
   });
 
@@ -53,7 +82,12 @@ function AdminPage() {
             className="mt-6 space-y-4"
             onSubmit={(e) => {
               e.preventDefault();
-              setAuthed(true);
+              if (password === ADMIN_PASSWORD) {
+                setAuthed(true);
+                setAuthError(false);
+              } else {
+                setAuthError(true);
+              }
             }}
           >
             <div>
@@ -70,9 +104,7 @@ function AdminPage() {
             <Button type="submit" className="w-full">
               Entrar
             </Button>
-            {appointmentsQuery.isError && (
-              <p className="text-sm text-destructive">Senha incorreta ou painel não configurado.</p>
-            )}
+            {authError && <p className="text-sm text-destructive">Senha incorreta.</p>}
           </form>
         </Card>
       </main>
@@ -116,7 +148,7 @@ function AdminPage() {
         )}
 
         <div className="space-y-3">
-          {appointmentsQuery.data?.map((appt: AdminAppointment) => (
+          {appointmentsQuery.data?.map((appt) => (
             <Card key={appt.id} className="rounded-2xl p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
