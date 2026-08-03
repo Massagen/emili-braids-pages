@@ -274,7 +274,10 @@ function AgendarPage() {
                     {availableSlots.map((slot) => (
                       <button
                         key={slot}
-                        onClick={() => setTime(slot)}
+                        onClick={() => {
+                          setTime(slot);
+                          setStep(4);
+                        }}
                         className={`rounded-xl border px-3 py-2 text-sm font-medium transition-colors ${
                           time === slot
                             ? "border-primary bg-primary text-primary-foreground"
