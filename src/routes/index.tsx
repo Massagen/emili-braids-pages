@@ -14,6 +14,7 @@ import { FAQ } from "@/components/landing/FAQ";
 import { FinalCta } from "@/components/landing/FinalCta";
 import { Footer } from "@/components/landing/Footer";
 import { FloatingButtons } from "@/components/landing/FloatingButtons";
+import { StickyCta } from "@/components/landing/StickyCta";
 
 const TITLE = "Emili Braids | Especialista em Tranças e Cachos em Vitória - ES";
 const DESCRIPTION =
@@ -68,7 +69,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Header />
       <main>
         <Hero />
@@ -86,6 +87,7 @@ function Index() {
       </main>
       <Footer />
       <FloatingButtons />
+      <StickyCta />
     </div>
   );
 }
