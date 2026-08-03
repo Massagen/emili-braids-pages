@@ -14,6 +14,7 @@ import {
   type Service,
   type Professional,
   type BookedSlot,
+  type BlockedSlot,
 } from "@/lib/scheduling";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -93,10 +94,29 @@ function AgendarPage() {
     },
   });
 
+  const blockedQuery = useQuery({
+    queryKey: ["blocked_slots", date ? format(date, "yyyy-MM-dd") : null],
+    enabled: Boolean(date),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blocked_slots")
+        .select("blocked_date, start_time, end_time")
+        .eq("blocked_date", format(date!, "yyyy-MM-dd"));
+      if (error) throw error;
+      return data as BlockedSlot[];
+    },
+  });
+
   const availableSlots = useMemo(() => {
     if (!date || !service || !professional || !bookedQuery.data) return [];
-    return getAvailableSlots(date, service.duration_minutes, bookedQuery.data, professional.id);
-  }, [date, service, professional, bookedQuery.data]);
+    return getAvailableSlots(
+      date,
+      service.duration_minutes,
+      bookedQuery.data,
+      professional.id,
+      blockedQuery.data ?? [],
+    );
+  }, [date, service, professional, bookedQuery.data, blockedQuery.data]);
 
   const submitMutation = useMutation({
     mutationFn: async () => {
@@ -246,8 +266,8 @@ function AgendarPage() {
 
               {step === 3 && (
                 <div className="space-y-4">
-                  {bookedQuery.isLoading && <LoadingRow />}
-                  {!bookedQuery.isLoading && availableSlots.length === 0 && (
+                  {(bookedQuery.isLoading || blockedQuery.isLoading) && <LoadingRow />}
+                  {!bookedQuery.isLoading && !blockedQuery.isLoading && availableSlots.length === 0 && (
                     <EmptyState text="Sem horários livres nesse dia. Escolha outra data." />
                   )}
                   <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">

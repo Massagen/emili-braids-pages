@@ -10,14 +10,14 @@ import boxBraids from "@/assets/service-box-braids.jpg";
 import twist from "@/assets/service-twist.jpg";
 
 const images = [
-  { src: g1, alt: "Tranças em luz rosa", h: "row-span-2" },
-  { src: g2, alt: "Longas box braids em luz roxa", h: "" },
-  { src: g3, alt: "Detalhe de nagô", h: "row-span-2" },
-  { src: g4, alt: "Cachos naturais", h: "" },
+  { src: g1, alt: "Knotless box braids longas feitas na Emili Braids", h: "row-span-2" },
+  { src: g2, alt: "Tranças nagô com desenho geométrico", h: "" },
+  { src: g3, alt: "Twist senegalês em tom mel", h: "row-span-2" },
+  { src: g4, alt: "Cachos naturais definidos e hidratados", h: "" },
   { src: boxBraids, alt: "Box braids clássica", h: "" },
-  { src: g5, alt: "Interior do salão", h: "" },
+  { src: g5, alt: "Ambiente acolhedor do atelier Emili Braids", h: "" },
   { src: twist, alt: "Twist elegante", h: "row-span-2" },
-  { src: g6, alt: "Textura de tranças", h: "" },
+  { src: g6, alt: "Detalhe da textura das tranças com argolas douradas", h: "" },
 ];
 
 export function Gallery() {

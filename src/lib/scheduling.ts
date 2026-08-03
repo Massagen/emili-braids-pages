@@ -12,6 +12,12 @@ export type Professional = {
   name: string;
 };
 
+export type BlockedSlot = {
+  blocked_date: string; // yyyy-MM-dd
+  start_time: string | null; // null = dia inteiro
+  end_time: string | null;
+};
+
 export type BookedSlot = {
   professional_id: string;
   appointment_date: string; // yyyy-MM-dd
@@ -56,6 +62,7 @@ export function getAvailableSlots(
   durationMinutes: number,
   booked: BookedSlot[],
   professionalId: string,
+  blocked: BlockedSlot[] = [],
 ): string[] {
   const weekday = date.getDay();
   const hours = BUSINESS_HOURS[weekday];
@@ -65,9 +72,19 @@ export function getAvailableSlots(
   const endMin = timeToMinutes(hours.end);
   const dateStr = format(date, "yyyy-MM-dd");
 
+  const dayBlocks = blocked.filter((b) => b.blocked_date === dateStr);
+  // Bloqueio de dia inteiro
+  if (dayBlocks.some((b) => !b.start_time || !b.end_time)) return [];
+
   const busy = booked
     .filter((b) => b.professional_id === professionalId && b.appointment_date === dateStr)
-    .map((b) => ({ start: timeToMinutes(b.start_time), end: timeToMinutes(b.end_time) }));
+    .map((b) => ({ start: timeToMinutes(b.start_time), end: timeToMinutes(b.end_time) }))
+    .concat(
+      dayBlocks.map((b) => ({
+        start: timeToMinutes(b.start_time as string),
+        end: timeToMinutes(b.end_time as string),
+      })),
+    );
 
   const now = new Date();
   const isToday = dateStr === format(now, "yyyy-MM-dd");
