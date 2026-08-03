@@ -18,12 +18,12 @@ export function FloatingButtons() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col gap-3">
+    <div className="fixed bottom-[5.5rem] right-4 z-40 flex flex-col gap-3 md:bottom-5 md:right-5">
       {showTop ? (
         <button type="button" aria-label="Voltar ao topo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="grid h-11 w-11 place-items-center rounded-full bg-background text-foreground shadow-luxe transition-transform hover:scale-110"><ArrowUp className="h-5 w-5" /></button>
       ) : null}
       <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram Emili Braids" className="grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-[#feda75] via-[#d62976] to-[#4f5bd5] text-white shadow-luxe transition-transform hover:scale-110"><Instagram className="h-5 w-5" /></a>
-      <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" aria-label="Agendar pelo WhatsApp" className="grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-luxe transition-transform hover:scale-110 animate-pulse-glow"><WhatsAppIcon className="h-7 w-7" /></a>
+      <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" aria-label="Agendar pelo WhatsApp" className="hidden md:grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-luxe transition-transform hover:scale-110 animate-pulse-glow"><WhatsAppIcon className="h-7 w-7" /></a>
     </div>
   );
 }
