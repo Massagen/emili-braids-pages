@@ -84,13 +84,12 @@ function AgendarPage() {
     queryKey: ["booked_slots", professional?.id, date ? format(date, "yyyy-MM-dd") : null],
     enabled: Boolean(professional && date),
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("booked_slots")
-        .select("professional_id, appointment_date, start_time, end_time")
-        .eq("professional_id", professional!.id)
-        .eq("appointment_date", format(date!, "yyyy-MM-dd"));
+      const { data, error } = await supabase.rpc("get_booked_slots", {
+        p_date: format(date!, "yyyy-MM-dd"),
+        p_professional_id: professional!.id,
+      });
       if (error) throw error;
-      return data as BookedSlot[];
+      return (data ?? []) as BookedSlot[];
     },
   });
 
@@ -98,12 +97,11 @@ function AgendarPage() {
     queryKey: ["blocked_slots", date ? format(date, "yyyy-MM-dd") : null],
     enabled: Boolean(date),
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("blocked_slots")
-        .select("blocked_date, start_time, end_time")
-        .eq("blocked_date", format(date!, "yyyy-MM-dd"));
+      const { data, error } = await supabase.rpc("get_blocked_slots", {
+        p_date: format(date!, "yyyy-MM-dd"),
+      });
       if (error) throw error;
-      return data as BlockedSlot[];
+      return (data ?? []) as BlockedSlot[];
     },
   });
 
