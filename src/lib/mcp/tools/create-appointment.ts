@@ -64,7 +64,7 @@ export default defineTool({
       new Date(`${date}T00:00:00`),
       service.duration_minutes,
       booked ?? [],
-      professionalId,
+      professionalId!,
       blocked ?? [],
     );
     if (!slots.includes(start_time)) {
