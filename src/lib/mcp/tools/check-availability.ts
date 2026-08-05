@@ -47,14 +47,8 @@ export default defineTool({
 
     const [{ data: booked, error: bookedError }, { data: blocked, error: blockedError }] =
       await Promise.all([
-        supabase
-          .from("booked_slots")
-          .select("professional_id,appointment_date,start_time,end_time")
-          .eq("appointment_date", date),
-        supabase
-          .from("blocked_slots")
-          .select("blocked_date,start_time,end_time")
-          .eq("blocked_date", date),
+        supabase.rpc("get_booked_slots", { p_date: date, p_professional_id: professionalId }),
+        supabase.rpc("get_blocked_slots", { p_date: date }),
       ]);
     if (bookedError) throw new ToolError(bookedError.message);
     if (blockedError) throw new ToolError(blockedError.message);
