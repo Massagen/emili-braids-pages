@@ -1,0 +1,144 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "emili-s-elegance",
+      "version": "0.1.0",
+      "title": "Emili's Elegance"
+    },
+    "tools": [
+      {
+        "name": "list_services",
+        "title": "Listar serviços",
+        "description": "Lista os serviços ativos da Emili Braids com duração em minutos e preço em reais.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_professionals",
+        "title": "Listar profissionais",
+        "description": "Lista as profissionais ativas que atendem no salão.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "check_availability",
+        "title": "Ver horários disponíveis",
+        "description": "Retorna os horários livres em uma data para um serviço, considerando agendamentos existentes e bloqueios da agenda.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "service_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "ID do serviço (veja list_services)."
+            },
+            "date": {
+              "type": "string",
+              "description": "Data no formato AAAA-MM-DD."
+            },
+            "professional_id": {
+              "description": "ID da profissional. Se omitido, usa a primeira profissional ativa.",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          "required": [
+            "service_id",
+            "date"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_appointment",
+        "title": "Criar agendamento",
+        "description": "Cria um agendamento (status 'pendente') para uma cliente em um horário livre. Confirme antes com check_availability.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "client_name": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Nome da cliente."
+            },
+            "client_phone": {
+              "type": "string",
+              "minLength": 8,
+              "description": "Telefone/WhatsApp da cliente."
+            },
+            "service_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "ID do serviço (veja list_services)."
+            },
+            "date": {
+              "type": "string",
+              "description": "Data no formato AAAA-MM-DD."
+            },
+            "start_time": {
+              "type": "string",
+              "description": "Horário de início no formato HH:MM."
+            },
+            "professional_id": {
+              "description": "ID da profissional (opcional).",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "notes": {
+              "description": "Observações da cliente.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "client_name",
+            "client_phone",
+            "service_id",
+            "date",
+            "start_time"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
