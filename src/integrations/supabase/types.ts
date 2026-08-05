@@ -159,38 +159,26 @@ export type Database = {
       }
     }
     Views: {
-      booked_slots: {
-        Row: {
-          appointment_date: string | null
-          end_time: string | null
-          professional_id: string | null
-          start_time: string | null
-        }
-        Insert: {
-          appointment_date?: string | null
-          end_time?: string | null
-          professional_id?: string | null
-          start_time?: string | null
-        }
-        Update: {
-          appointment_date?: string | null
-          end_time?: string | null
-          professional_id?: string | null
-          start_time?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "appointments_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "professionals"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_blocked_slots: {
+        Args: { p_date: string }
+        Returns: {
+          blocked_date: string
+          end_time: string
+          start_time: string
+        }[]
+      }
+      get_booked_slots: {
+        Args: { p_date: string; p_professional_id?: string }
+        Returns: {
+          appointment_date: string
+          end_time: string
+          professional_id: string
+          start_time: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
