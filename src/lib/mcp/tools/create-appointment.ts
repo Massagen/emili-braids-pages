@@ -1,6 +1,7 @@
 import { defineTool, ToolError } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { addMinutesToTime, getAvailableSlots } from "@/lib/scheduling";
+import { addMinutesToTime } from "@/lib/scheduling";
+import { fetchAvailableSlots } from "@/lib/availability.server";
 import { supabaseAnon } from "../supabase";
 
 export default defineTool({
@@ -46,21 +47,11 @@ export default defineTool({
       professionalId = pro.id;
     }
 
-    const [{ data: booked, error: bookedError }, { data: blocked, error: blockedError }] =
-      await Promise.all([
-        supabase.rpc("get_booked_slots", { p_date: date, p_professional_id: professionalId }),
-        supabase.rpc("get_blocked_slots", { p_date: date }),
-      ]);
-    if (bookedError) throw new ToolError(bookedError.message);
-    if (blockedError) throw new ToolError(blockedError.message);
-
-    const slots = getAvailableSlots(
-      new Date(`${date}T00:00:00`),
-      service.duration_minutes,
-      booked ?? [],
-      professionalId!,
-      blocked ?? [],
-    );
+    const slots = await fetchAvailableSlots({
+      date,
+      professionalId: professionalId!,
+      durationMinutes: service.duration_minutes,
+    });
     if (!slots.includes(start_time)) {
       throw new ToolError(
         `Horário ${start_time} indisponível. Livres: ${slots.length ? slots.join(", ") : "nenhum nesta data"}.`,
