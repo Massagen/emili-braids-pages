@@ -1,20 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Check, Loader2, ChevronLeft } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { getAvailability } from "@/lib/availability.functions";
 import {
-  getAvailableSlots,
   formatPrice,
   formatDuration,
   addMinutesToTime,
   type Service,
   type Professional,
-  type BookedSlot,
-  type BlockedSlot,
 } from "@/lib/scheduling";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -250,12 +249,12 @@ function AgendarPage() {
 
               {step === 3 && (
                 <div className="space-y-4">
-                  {(bookedQuery.isLoading || blockedQuery.isLoading) && <LoadingRow />}
-                  {!bookedQuery.isLoading && !blockedQuery.isLoading && availableSlots.length === 0 && (
+                  {slotsQuery.isLoading && <LoadingRow />}
+                  {!slotsQuery.isLoading && availableSlots.length === 0 && (
                     <EmptyState text="Sem horários livres nesse dia. Escolha outra data." />
                   )}
                   <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                    {availableSlots.map((slot) => (
+                    {availableSlots.map((slot: string) => (
                       <button
                         key={slot}
                         onClick={() => {
