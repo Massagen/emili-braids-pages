@@ -70,28 +70,28 @@
 :root {
   --radius: 1rem;
   /* Emili Braids palette — Rosa #FF2E8B, Roxo #9B3CFF, Dourado #D9B15A */
-  --background: oklch(0.99 0.006 80);
-  --foreground: oklch(0.2 0.02 45);
+  --background: oklch(0.99 0.006 340);
+  --foreground: oklch(0.19 0.03 320);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.02 45);
+  --card-foreground: oklch(0.19 0.03 320);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.02 45);
-  --primary: oklch(0.42 0.055 52); /* café */
+  --popover-foreground: oklch(0.19 0.03 320);
+  --primary: oklch(0.63 0.26 6); /* rosa #FF2E8B */
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.96 0.014 70);
-  --secondary-foreground: oklch(0.2 0.02 45);
-  --muted: oklch(0.96 0.014 70);
-  --muted-foreground: oklch(0.48 0.025 60);
-  --accent: oklch(0.94 0.025 70);
-  --accent-foreground: oklch(0.2 0.02 45);
+  --secondary: oklch(0.96 0.016 330);
+  --secondary-foreground: oklch(0.19 0.03 320);
+  --muted: oklch(0.96 0.016 330);
+  --muted-foreground: oklch(0.49 0.035 320);
+  --accent: oklch(0.94 0.03 310);
+  --accent-foreground: oklch(0.19 0.03 320);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.9 0.018 70);
-  --input: oklch(0.9 0.018 70);
-  --ring: oklch(0.42 0.055 52);
-  --gold: oklch(0.79 0.1 84); /* dourado suave */
-  --gold-foreground: oklch(0.2 0.02 45);
-  --plum: oklch(0.6 0.09 55); /* caramelo */
+  --border: oklch(0.9 0.02 330);
+  --input: oklch(0.9 0.02 330);
+  --ring: oklch(0.63 0.26 6);
+  --gold: oklch(0.79 0.1 84); /* dourado #D9B15A */
+  --gold-foreground: oklch(0.19 0.03 320);
+  --plum: oklch(0.58 0.27 300); /* roxo #9B3CFF */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
