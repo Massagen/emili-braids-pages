@@ -1,20 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Check, Loader2, ChevronLeft } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { getAvailability } from "@/lib/availability.functions";
 import {
-  getAvailableSlots,
   formatPrice,
   formatDuration,
   addMinutesToTime,
   type Service,
   type Professional,
-  type BookedSlot,
-  type BlockedSlot,
 } from "@/lib/scheduling";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -80,41 +79,27 @@ function AgendarPage() {
     if (professionalsQuery.data?.length === 1) setProfessional(professionalsQuery.data[0]);
   }, [professionalsQuery.data]);
 
-  const bookedQuery = useQuery({
-    queryKey: ["booked_slots", professional?.id, date ? format(date, "yyyy-MM-dd") : null],
-    enabled: Boolean(professional && date),
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_booked_slots", {
-        p_date: format(date!, "yyyy-MM-dd"),
-        p_professional_id: professional!.id,
-      });
-      if (error) throw error;
-      return (data ?? []) as BookedSlot[];
-    },
+  const fetchAvailability = useServerFn(getAvailability);
+
+  const slotsQuery = useQuery({
+    queryKey: [
+      "available_slots",
+      professional?.id,
+      service?.id,
+      date ? format(date, "yyyy-MM-dd") : null,
+    ],
+    enabled: Boolean(professional && date && service),
+    queryFn: async () =>
+      fetchAvailability({
+        data: {
+          date: format(date!, "yyyy-MM-dd"),
+          professionalId: professional!.id,
+          durationMinutes: service!.duration_minutes,
+        },
+      }),
   });
 
-  const blockedQuery = useQuery({
-    queryKey: ["blocked_slots", date ? format(date, "yyyy-MM-dd") : null],
-    enabled: Boolean(date),
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_blocked_slots", {
-        p_date: format(date!, "yyyy-MM-dd"),
-      });
-      if (error) throw error;
-      return (data ?? []) as BlockedSlot[];
-    },
-  });
-
-  const availableSlots = useMemo(() => {
-    if (!date || !service || !professional || !bookedQuery.data) return [];
-    return getAvailableSlots(
-      date,
-      service.duration_minutes,
-      bookedQuery.data,
-      professional.id,
-      blockedQuery.data ?? [],
-    );
-  }, [date, service, professional, bookedQuery.data, blockedQuery.data]);
+  const availableSlots = useMemo(() => slotsQuery.data ?? [], [slotsQuery.data]);
 
   const submitMutation = useMutation({
     mutationFn: async () => {
@@ -264,12 +249,12 @@ function AgendarPage() {
 
               {step === 3 && (
                 <div className="space-y-4">
-                  {(bookedQuery.isLoading || blockedQuery.isLoading) && <LoadingRow />}
-                  {!bookedQuery.isLoading && !blockedQuery.isLoading && availableSlots.length === 0 && (
+                  {slotsQuery.isLoading && <LoadingRow />}
+                  {!slotsQuery.isLoading && availableSlots.length === 0 && (
                     <EmptyState text="Sem horários livres nesse dia. Escolha outra data." />
                   )}
                   <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                    {availableSlots.map((slot) => (
+                    {availableSlots.map((slot: string) => (
                       <button
                         key={slot}
                         onClick={() => {
