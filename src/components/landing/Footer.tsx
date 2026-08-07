@@ -31,14 +31,14 @@ export function Footer() {
       </div>
       <div className="mx-auto mt-12 w-[min(1400px,92%)] border-t border-white/10 pt-6 text-center text-xs text-white/40">
         <p>© {new Date().getFullYear()} Emili Braids. Todos os direitos reservados.</p>
-        <p className="mt-2 text-yellow-400">
+        <p className="mt-2 text-white/80">
           Desenvolvido Por{" "}
           <a
             href="https://wa.me/62996560784"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Desenvolvido por Jessé Silva"
-            className="font-semibold underline hover:text-yellow-300"
+            className="font-semibold text-yellow-400 underline hover:text-yellow-300"
           >
             Jessé Silva.
           </a>
